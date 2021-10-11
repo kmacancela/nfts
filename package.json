@@ -20,6 +20,10 @@
   },
   "homepage": "https://github.com/kmacancela/nfts#readme",
   "dependencies": {
+    "chai": "^4.3.4",
     "truffle": "^5.4.13"
+  },
+  "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.15"
   }
 }

@@ -19,15 +19,17 @@ contract Date is Ownable, ERC721 {
     // we are mapping the token id to the metadata. T his is how we store data inside the blockchain.
     mapping(uint256 => Metadata) id_to_date;
 
+    string private _currentBaseURI;
+
     // defined our token name and token symbol 
     // the constructor is executed when we deploy the smart contract to the blockchain
     // here we are executing several Date tokens for my wallet
-    constructor() public ERC721("Date", "DATE") {
-        _setBaseURI("http://localhost/token/");
+    constructor() ERC721("Date", "DATE") {
+        setBaseURI("http://localhost/token/");
 
         // Origin is the global variable in Solidity which returns the address of the account that sent the transaction
         mint(1, 1, 1, 4, "ORIGIN");
-        (uint16 now_year, uint8 now_month, uint8 now_day) = timestampToDate(now);
+        (uint16 now_year, uint8 now_month, uint8 now_day) = timestampToDate(block.timestamp);
         mint(now_year, now_month, now_day, 4, "Date Token Start");
         mint(1920, 8, 26, 6, "About time women got to vote!");
         mint(2005, 10, 29, 5, "All cats reunite!");
@@ -39,7 +41,11 @@ contract Date is Ownable, ERC721 {
     }
 
     function setBaseURI(string memory baseURI) public onlyOwner {
-        _setBaseURI(baseURI);
+        _currentBaseURI = baseURI;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _currentBaseURI;
     }
 
     // will create a new Date token
@@ -56,10 +62,10 @@ contract Date is Ownable, ERC721 {
     // since we defined as payable, user will need to pay a fee in order to create this Date token (cost is defined as 10 finney)
     function claim(uint16 year, uint8 month, uint8 day, string calldata title) external payable {
         // if user does not pay the 10 finney fee to create the token, then they will get the message below
-        require(msg.value == 10 finney, "claiming a date costs 10 finney");
+        require(msg.value == 0.01 ether, "claiming a date costs 10 finney");
 
         // we check the year, month, and day parameters for validity
-        (uint16 now_year, uint8 now_month, uint8 now_day) = timestampToDate(now);
+        (uint16 now_year, uint8 now_month, uint8 now_day) = timestampToDate(block.timestamp);
         if ((year > now_year) || 
             (year == now_year && month > now_month) || 
             (year == now_year && month == now_month && day > now_day)) {
@@ -90,7 +96,7 @@ contract Date is Ownable, ERC721 {
         // we now add them to the mint function
         mint(year, month, day, color, title);
         // we transfer the 10 finney to my wallet
-        payable(owner()).transfer(10 finney);
+        payable(owner()).transfer(0.01 ether);
     }
 
     function ownerOf(uint16 year, uint8 month, uint8 day) public view returns(address) {

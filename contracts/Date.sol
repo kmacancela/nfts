@@ -94,6 +94,7 @@ contract Date is Ownable, ERC721 {
     }
 
     function ownerOf(uint16 year, uint8 month, uint8 day) public view returns(address) {
+        // the ownerOf() function finds the provided token ID in the _tokenOwner map and returns the address of its owner
         return ownerOf(id(year, month, day));
     }
 

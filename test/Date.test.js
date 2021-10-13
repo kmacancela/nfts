@@ -247,13 +247,13 @@ contract("Date", (accounts) => {
 
     // fails if minter tries to claim a token with a future date as its metadata
     describe("Trying to mint a future date", async () => {
-        it("fails for one day in the future", async () => {
+        it("fails for two days in the future", async () => {
             // getBlock() returns a block matching the block number or block hash or the string "earliest", "latest" or "pending"
             // pending is the currently mined block (including pending transactions) 
             let pendingBlock = await web3.eth.getBlock("pending");
             let tomorrow = new Date((pendingBlock.timestamp + 86400) * 1000);
             await expectRevert(
-                date.claim(tomorrow.getFullYear(), tomorrow.getMonth()+1, tomorrow.getDate(), "Tomorrow never dies!", { from: accounts[2], value: price }),
+                date.claim(tomorrow.getFullYear(), tomorrow.getMonth()+1, tomorrow.getDate()+1, "Tomorrow never dies!", { from: accounts[2], value: price }),
                 "a date from the future can't be claimed"
             );
         });
@@ -286,8 +286,8 @@ contract("Date", (accounts) => {
             expect(title).to.equal("This is the beginning");
 
             // changes by finding token year, month, day
-            await date.changeTitleOf(1986, 6, 12, "HBD2ME");
-            title = await date.titleOf(1986, 6, 12);
+            await date.changeTitleOf(2005, 10, 29, "HBD2ME");
+            title = await date.titleOf(2005, 10, 29);
             expect(title).to.equal("HBD2ME");
         });
 
@@ -300,10 +300,10 @@ contract("Date", (accounts) => {
             expect(title).to.equal("This is the beginning");
 
             await expectRevert(
-                date.changeTitleOf(1986, 6, 12, "this will fail", { from: accounts[1] }),
+                date.changeTitleOf(2005, 10, 29, "this will fail", { from: accounts[1] }),
                 "only the owner of this date can change its title"
             );
-            title = await date.titleOf(1986, 6, 12);
+            title = await date.titleOf(2005, 10, 29);
             expect(title).to.equal("HBD2ME");
         });
     });

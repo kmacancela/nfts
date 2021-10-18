@@ -15,7 +15,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 // this will allow us to call the functions inside of our smart contract
 const contract = new web3.eth.Contract(DateToken.abi, contractAddress);
 
-const { isNumeric, colorToMaterialName, isLeapYear, toDate } = require("./utils.js");
+const {isNumeric, colorToMaterialName, isLeapYear, toDate} = require("./utils.js");
 const { generateSVG } = require("./svg.js");
 
 const NodeCache = require("node-cache");

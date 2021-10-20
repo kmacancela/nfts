@@ -7,3 +7,4 @@ node_modules/
 # Misc
 build/contracts
 app/contracts
+app/client/src/contracts

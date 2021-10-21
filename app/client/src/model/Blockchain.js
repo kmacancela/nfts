@@ -3,6 +3,7 @@ import DateToken from "../contracts/Date.json";
 
 let contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 
+// using web3 to connect to the blockchain 
 let web3 = undefined;
 let account = undefined;
 let contract = undefined;
@@ -39,14 +40,18 @@ export function isConnectedToBlockchain() {
     return contract !== undefined && account !== undefined;
 }
 
+// how we will load all the minted Date tokens from the blockchain in order to show them in the calendar
 export async function loadAllMintedDates() {
     if (!isConnectedToBlockchain) {
         return {};
     }
 
+    // we get the total supply of Date tokens
     let allMintedDates = {};
     const totalSupply = await contract.methods.totalSupply().call();
 
+    // and iterate over each Date token 
+    // and call tokenByIndex() (implemented in our ERC721  smart contract)
     for (let i=0; i < totalSupply; i++) {
         const tokenId = await contract.methods.tokenByIndex(i).call();
         const token = await loadToken(tokenId);
@@ -56,22 +61,28 @@ export async function loadAllMintedDates() {
     return allMintedDates;
 }
 
-export function claimDate(date, note) {
+// how we start a transaction if user wants to claim a Date token
+export function claimDate(date, title) {
+    // claim() is implemented in our smart contract
+    // send() (web3 method) will transfer 10 finney. Metamask will pop up when user hits Submit where user will be able to send the transaction to start the smart contract minting process and get their Date token
     return contract.methods.claim(
         date.getFullYear(),
         date.getMonth() + 1,
         date.getDate(),
-        note,
+        title,
     ).send({
         from: account, 
         value: Web3.utils.toWei('10', 'finney')
     });
 }
 
+// for loading a Date token
 export async function loadToken(tokenId) {
+    // get() will get our metadata struct
     const tokenData = await contract.methods.get(tokenId).call();
     const owner = await contract.methods.ownerOf(tokenId).call();
 
+    // we use the info we got to add to this JS object to hand over to the UI
     return {
         tokenId: tokenId,
         date: (() => { 

@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
+    "client:build": "(cd client && npm run build)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,5 +17,14 @@
     "node-cache": "^5.1.2",
     "nodemon": "^2.0.13",
     "web3": "^1.6.0"
+  },
+  "nodemonConfig": {
+    "events": {
+      "restart": "npm run client:build"
+    },
+    "watch": [
+      "./*.js",
+      "./client/src/"
+    ]
   }
 }
